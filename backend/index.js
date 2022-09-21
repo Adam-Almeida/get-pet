@@ -15,6 +15,9 @@ app.use(cors({credentials: true, origin: 'http://localhost:3000'}))
 // Public folder for images
 app.use(express.static('public'))
 
-// Rotes
+// Routes
+const userRoutes = require('./routes/User')
+
+app.use('/users', userRoutes)
 
 app.listen(port, () => console.log(`Server is runnig on port ${port}`) )
