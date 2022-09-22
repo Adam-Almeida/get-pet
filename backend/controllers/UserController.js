@@ -110,13 +110,13 @@ module.exports = class UserController {
     static async checkUser(req, res) {
         let currentUser
 
-        if(req.headers.authorization) {
+        if (req.headers.authorization) {
 
             const decoded = jwt.verify(GetToken(req), process.env.SECRET)
             currentUser = await User.findById(decoded.user)
             currentUser.password = undefined
 
-        }else{
+        } else {
             currentUser = null
         }
 
@@ -125,11 +125,11 @@ module.exports = class UserController {
     }
 
     static async getUserById(req, res) {
-        const { id } =  req.params
-        
-        const validId =  mongoose.Types.ObjectId.isValid(id)
+        const { id } = req.params
 
-        if(!validId){
+        const validId = mongoose.Types.ObjectId.isValid(id)
+
+        if (!validId) {
             res.status(422).json({
                 "error": {
                     "_id": {
@@ -140,8 +140,8 @@ module.exports = class UserController {
             return
         }
 
-        const user = await User.findById(id)
-        if(!user){
+        const user = await User.findById(id).select('-password')
+        if (!user) {
             res.status(422).json({
                 "error": {
                     "user": {
@@ -151,9 +151,32 @@ module.exports = class UserController {
             })
             return
         }
-        
-        user.password = undefined
+
         res.status(200).json(user)
+    }
+
+    static async editUser(req, res){
+        const { id } = req.params
+
+        const validId = mongoose.Types.ObjectId.isValid(id)
+
+        if (!validId) {
+            res.status(422).json({
+                "error": {
+                    "_id": {
+                        "msg": "O id informado não parece válido",
+                    }
+                }
+            })
+            return
+        }
+
+        res.status(200).json({
+                "user": {
+                    "msg": "Deu certo update",
+                }
+        })
+        return
     }
 
 }
