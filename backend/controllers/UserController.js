@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const { validationResult, matchedData } = require('express-validator')
 const bcrypt = require('bcrypt')
+const CreateUserToken = require('../helpers/CreateUserToken')
 
 module.exports = class UserController {
     static async register(req, res) {
@@ -27,9 +28,9 @@ module.exports = class UserController {
 
         const { name, phone, email, password } = data
 
-        const emailExists = await User.findOne({email})
+        const emailExists = await User.findOne({ email })
 
-        if(emailExists){
+        if (emailExists) {
             res.status(422).json({
                 "error": {
                     "email": {
@@ -53,9 +54,10 @@ module.exports = class UserController {
 
         try {
             const newUser = await user.save()
-            res.json(newUser)
+            await CreateUserToken(newUser, req, res)
+            
         } catch (error) {
-            res.status(500).json({error: error})
+            res.status(500).json({ error: error })
         }
     }
 }
