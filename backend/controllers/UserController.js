@@ -1,9 +1,10 @@
 const User = require('../models/User')
 const { validationResult, matchedData } = require('express-validator')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 const CreateUserToken = require('../helpers/CreateUserToken')
 
 module.exports = class UserController {
+
     static async register(req, res) {
 
         const errors = validationResult(req)
@@ -41,7 +42,6 @@ module.exports = class UserController {
             })
             return
         }
-
         const salt = await bcrypt.genSalt(12)
         const passwordHash = await bcrypt.hash(password, salt)
 
@@ -55,7 +55,7 @@ module.exports = class UserController {
         try {
             const newUser = await user.save()
             await CreateUserToken(newUser, req, res)
-            
+
         } catch (error) {
             res.status(500).json({ error: error })
         }
@@ -72,6 +72,7 @@ module.exports = class UserController {
         const data = matchedData(req)
 
         const { email, password } = data
+
         const user = await User.findOne({ email })
 
         if (!user) {
@@ -86,7 +87,20 @@ module.exports = class UserController {
             return
         }
 
-        
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!match) {
+            res.status(422).json({
+                "error": {
+                    "user/password": {
+                        "msg": "O usuário ou senha informados não conferem",
+                    }
+                }
+            })
+            return
+        }
+
+        await CreateUserToken(user, req, res)
 
     }
 }
