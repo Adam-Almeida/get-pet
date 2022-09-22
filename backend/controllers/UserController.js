@@ -60,4 +60,33 @@ module.exports = class UserController {
             res.status(500).json({ error: error })
         }
     }
+
+    static async login(req, res) {
+
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(422).json({ error: errors.mapped() })
+            return
+        }
+
+        const data = matchedData(req)
+
+        const { email, password } = data
+        const user = await User.findOne({ email })
+
+        if (!user) {
+            res.status(422).json({
+                "error": {
+                    "email": {
+                        "msg": "O usuário informado ainda não está cadastrado",
+                        "param": "email",
+                    }
+                }
+            })
+            return
+        }
+
+        
+
+    }
 }
