@@ -4,6 +4,7 @@ const { validationResult, matchedData } = require('express-validator')
 const bcrypt = require('bcrypt');
 const CreateUserToken = require('../helpers/CreateUserToken');
 const GetToken = require('../helpers/GetToken');
+const { default: mongoose } = require('mongoose');
 
 module.exports = class UserController {
 
@@ -121,6 +122,38 @@ module.exports = class UserController {
 
         res.status(200).json(currentUser)
 
+    }
+
+    static async getUserById(req, res) {
+        const { id } =  req.params
+        
+        const validId =  mongoose.Types.ObjectId.isValid(id)
+
+        if(!validId){
+            res.status(422).json({
+                "error": {
+                    "_id": {
+                        "msg": "O id informado não parece válido",
+                    }
+                }
+            })
+            return
+        }
+
+        const user = await User.findById(id)
+        if(!user){
+            res.status(422).json({
+                "error": {
+                    "user": {
+                        "msg": "O usuário informado não existe",
+                    }
+                }
+            })
+            return
+        }
+        
+        user.password = undefined
+        res.status(200).json(user)
     }
 
 }
