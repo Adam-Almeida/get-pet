@@ -7,5 +7,6 @@ const UserValidator = require('../validators/UserValidator')
 
 router.post('/register', UserValidator.register, UserController.register)
 router.post('/login', AuthValidator.authLogin, UserController.login)
+router.get('/checkuser', UserController.checkUser)
 
 module.exports = router

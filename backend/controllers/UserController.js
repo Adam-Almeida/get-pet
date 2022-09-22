@@ -1,7 +1,9 @@
 const User = require('../models/User')
+const jwt = require('jsonwebtoken')
 const { validationResult, matchedData } = require('express-validator')
 const bcrypt = require('bcrypt');
-const CreateUserToken = require('../helpers/CreateUserToken')
+const CreateUserToken = require('../helpers/CreateUserToken');
+const GetToken = require('../helpers/GetToken');
 
 module.exports = class UserController {
 
@@ -54,7 +56,7 @@ module.exports = class UserController {
 
         try {
             const newUser = await user.save()
-            await CreateUserToken(newUser, req, res)
+            await CreateUserToken(newUser._id, req, res)
 
         } catch (error) {
             res.status(500).json({ error: error })
@@ -100,7 +102,25 @@ module.exports = class UserController {
             return
         }
 
-        await CreateUserToken(user, req, res)
+        await CreateUserToken(user._id, req, res)
 
     }
+
+    static async checkUser(req, res) {
+        let currentUser
+
+        if(req.headers.authorization) {
+
+            const decoded = jwt.verify(GetToken(req), process.env.SECRET)
+            currentUser = await User.findById(decoded.user)
+            currentUser.password = undefined
+
+        }else{
+            currentUser = null
+        }
+
+        res.status(200).json(currentUser)
+
+    }
+
 }
