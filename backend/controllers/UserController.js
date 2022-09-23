@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const CreateUserToken = require('../helpers/CreateUserToken');
 const GetToken = require('../helpers/GetToken');
 const { default: mongoose } = require('mongoose');
+const GetUserByToken = require('../helpers/GetUserByToken');
 
 module.exports = class UserController {
 
@@ -158,6 +159,25 @@ module.exports = class UserController {
     static async editUser(req, res){
         const { id } = req.params
 
+        const token = GetToken(req)
+        const user = GetUserByToken(token)
+
+        const { name, email, phone, password, confirmPassword } = req.body
+
+        const userExists = await User.findOne({email: email})
+        if(user.email !== email && userExists){
+            res.status(422).json({
+                "error": {
+                    "email": {
+                        "msg": "Por favor, utilize outro email",
+                    }
+                }
+            })
+            return
+        }
+
+        let image = ''
+
         const validId = mongoose.Types.ObjectId.isValid(id)
 
         if (!validId) {
@@ -170,6 +190,18 @@ module.exports = class UserController {
             })
             return
         }
+
+        if (!user) {
+            res.status(422).json({
+                "error": {
+                    "user": {
+                        "msg": "O usuário informado não existe",
+                    }
+                }
+            })
+            return
+        }
+
 
         res.status(200).json({
                 "user": {

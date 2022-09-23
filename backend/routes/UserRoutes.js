@@ -11,6 +11,6 @@ router.post('/register', UserValidator.register, UserController.register)
 router.post('/login', AuthValidator.authLogin, UserController.login)
 router.get('/checkuser', UserController.checkUser)
 router.get('/:id', UserController.getUserById)
-router.patch('/edit/:id', VerifyToken, UserController.editUser)
+router.patch('/edit/:id', VerifyToken, UserValidator.update, UserController.editUser)
 
 module.exports = router
