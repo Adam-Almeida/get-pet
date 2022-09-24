@@ -213,6 +213,10 @@ module.exports = class UserController {
 
         let image = ''
 
+        if(req.file) {
+            image = req.file.file
+        }
+
         if (password !== null && password !== confirmPassword) {
             res.status(422).json({
                 "error": {
