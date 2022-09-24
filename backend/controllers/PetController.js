@@ -15,10 +15,24 @@ module.exports = class PetController {
         const data = matchedData(req)
 
         const { name, age, weight, color, available } = data
+        const images = req.files
+
         const token = await GetToken(req)
         const user = await GetUserByToken(token)
 
         //images upload
+        if(!images.length) {
+            res.status(422).json({
+                "error": {
+                    "images": {
+                        "msg": "A imagem é obrigatória.",
+                        "param": "images",
+                        "location": "body"
+                    }
+                }
+            })
+            return
+        }
 
         const pet = new Pet({
             name,
@@ -33,6 +47,10 @@ module.exports = class PetController {
                 image: user.image,
                 phone: user.phone
             }
+        })
+
+        images.map((image) => {
+            pet.images.push(image.filename)
         })
 
         try {
