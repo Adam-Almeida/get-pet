@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const UserRoutes = require('./routes/UserRoutes')
+const PetRoutes = require('./routes/PetRoutes')
 
 const port = 5000
 
@@ -21,6 +22,7 @@ app.use(express.static('public'))
 
 // Routes
 app.use('/users', UserRoutes)
+app.use('/pets', PetRoutes)
 
 app.get('/ping', (req, res) => {
     res.json({ pong: true })
