@@ -211,10 +211,8 @@ module.exports = class UserController {
             return
         }
 
-        let image = ''
-
-        if(req.file) {
-            image = req.file.file
+        if (req.file) {
+            data.image = req.file.filename
         }
 
         if (password !== null && password !== confirmPassword) {
