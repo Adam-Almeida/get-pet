@@ -109,19 +109,23 @@ module.exports = class UserController {
     }
 
     static async checkUser(req, res) {
-        let currentUser
+        try {
+            let currentUser
 
-        if (req.headers.authorization) {
+            if (req.headers.authorization) {
 
-            const decoded = jwt.verify(GetToken(req), process.env.SECRET)
-            currentUser = await User.findById(decoded.user)
-            currentUser.password = undefined
+                const decoded = jwt.verify(GetToken(req), process.env.SECRET)
+                currentUser = await User.findById(decoded.user)
+                currentUser.password = undefined
 
-        } else {
-            currentUser = null
+            } else {
+                currentUser = null
+            }
+
+            res.status(200).json(currentUser)
+        } catch (error) {
+            res.status(500).json({ error: error })
         }
-
-        res.status(200).json(currentUser)
 
     }
 
@@ -156,27 +160,18 @@ module.exports = class UserController {
         res.status(200).json(user)
     }
 
-    static async editUser(req, res){
+    static async editUser(req, res) {
         const { id } = req.params
 
-        const token = GetToken(req)
-        const user = GetUserByToken(token)
+        const errors = validationResult(req)
 
-        const { name, email, phone, password, confirmPassword } = req.body
-
-        const userExists = await User.findOne({email: email})
-        if(user.email !== email && userExists){
-            res.status(422).json({
-                "error": {
-                    "email": {
-                        "msg": "Por favor, utilize outro email",
-                    }
-                }
-            })
+        if (!errors.isEmpty()) {
+            res.status(422).json({ error: errors.mapped() })
             return
         }
-
-        let image = ''
+        const data = matchedData(req)
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
 
         const validId = mongoose.Types.ObjectId.isValid(id)
 
@@ -202,13 +197,57 @@ module.exports = class UserController {
             return
         }
 
+        const { name, email, phone, password, confirmPassword } = data
 
-        res.status(200).json({
-                "user": {
-                    "msg": "Deu certo update",
+        const userExists = await User.findOne({ email: email })
+        if (user.email !== email && userExists) {
+            res.status(422).json({
+                "error": {
+                    "email": {
+                        "msg": "Por favor, utilize outro email",
+                    }
                 }
-        })
-        return
+            })
+            return
+        }
+
+        let image = ''
+
+        if (password !== null && password !== confirmPassword) {
+            res.status(422).json({
+                "error": {
+                    "confirmPassword": {
+                        "msg": "A senha e a confrimação de senha não conferem.",
+                        "param": "confirmPassword",
+                        "location": "body"
+                    }
+                }
+            })
+
+        } else if (password !== undefined && password === confirmPassword) {
+            const salt = await bcrypt.genSalt(12)
+            const passwordHash = await bcrypt.hash(password, salt)
+            user.password = passwordHash
+        }
+
+        try {
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: user.id },
+                { $set: data },
+                { new: true }
+            ).select('-password')
+            res.status(200).json({
+                "success": {
+                    "message": "Usuário atualizado com sucesso",
+                    "user": { updatedUser }
+                }
+            })
+
+        } catch (error) {
+            res.status(500).json({ error: error })
+            return
+        }
+
     }
 
 }

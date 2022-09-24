@@ -65,7 +65,7 @@ module.exports = {
       errorMessage: 'A senha deve ter entre 8 e 48 caracteres.'
     },
     confirmPassword: {
-      optional:true,
+      optional: true,
       isLength: {
         options: { min: 8, max: 48 }
       },
