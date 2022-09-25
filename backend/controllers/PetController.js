@@ -135,4 +135,36 @@ module.exports = class PetController {
         }
     }
 
+    static async getAllUserAdoptions(req, res) {
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
+        let { sort = 'asc', offset = 0, limit = 8 } = req.query
+
+        try {
+
+            const petsTotal = await Pet.find({ 'adopter._id': user._id }).exec()
+            const total = petsTotal.length ?? 0
+
+            const pets = await Pet.find({ 'adopter._id': user._id })
+                .sort({ updatedAt: (sort == 'desc' ? -1 : 1) })
+                .skip(parseInt(offset))
+                .limit(parseInt(limit))
+                .exec()
+
+            res.json({ pets, total })
+
+        } catch (error) {
+            res.status(422).json({
+                "error": {
+                    "limit/offset": {
+                        "msg": "O limit ou o offset não parece um valor válido.",
+                        "location": "query"
+                    }
+                }
+            })
+            return
+        }
+
+    }
+
 }

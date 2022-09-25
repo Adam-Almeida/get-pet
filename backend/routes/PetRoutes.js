@@ -11,5 +11,6 @@ const { imageUpload } = require('../helpers/ImageUpload')
 router.post('/create', verifyToken, imageUpload.array('images'), PetValidator.create, PetController.create)
 router.get('/', PetController.getList)
 router.get('/mypets', verifyToken, PetController.getAllUserPets)
+router.get('/myadoptions', verifyToken, PetController.getAllUserAdoptions)
 
 module.exports = router
