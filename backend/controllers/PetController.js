@@ -344,5 +344,78 @@ module.exports = class PetController {
 
     }
 
+    static async schedule(req, res) {
+        const { id } = req.params
 
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(422).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não é válido.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        const pet = await Pet.findOne({ _id: id })
+
+        if (!pet) {
+            res.status(404).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não pertence a nenhum pet.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        if (pet.user._id.equals(user.id)) {
+            res.status(422).json({
+                "error": {
+                    "pet": {
+                        "msg": "Você não pode agendar uma visita para o seu próprio pet.",
+                    }
+                }
+            })
+            return
+        }
+        if (pet.adopter) {
+            if (pet.adopter._id.equals(user._id)) {
+                res.status(422).json({
+                    "error": {
+                        "pet": {
+                            "msg": "Você já agendou uma visita para este pet.",
+                        }
+                    }
+                })
+                return
+            }
+        }
+
+        pet.adopter = {
+            _id: user._id,
+            name: user.name,
+            image: user.image
+        }
+
+        try {
+            await Pet.findByIdAndUpdate(id, pet)
+            res.status(200).json({
+                "success": {
+                    "message": `A visita foi agendada com sucesso, entre em contato com ${pet.user.name}`,
+                }
+            })
+
+        } catch (error) {
+            res.status(500).json({ error: error })
+            return
+        }
+    }
 }
