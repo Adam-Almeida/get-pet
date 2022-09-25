@@ -75,45 +75,20 @@ module.exports = class PetController {
     }
 
     static async getList(req, res) {
-        let { sort = 'asc', offset = 0, limit = 8, q, color } = req.query
+        let { sort = 'asc', offset = 0, limit = 8 } = req.query
 
         try {
 
-            let filters = { status: true }
-
-            if (q) {
-                filters.name = { '$regex': q, '$options': 'i' }
-            }
-
-            if (color) {
-                filters.color = { '$regex': color, '$options': 'i' }
-            }
-
-            const petsTotal = await Pet.find(filters).exec()
+            const petsTotal = await Pet.find().exec()
             const total = petsTotal.length ?? 0
 
-            const all = await Pet.find(filters)
+            const allPets = await Pet.find()
                 .sort({ updatedAt: (sort == 'desc' ? -1 : 1) })
                 .skip(parseInt(offset))
                 .limit(parseInt(limit))
                 .exec()
 
-            let pets = []
-            for (let i in all) {
-
-                pets.push({
-                    id: all[i]._id,
-                    name: all[i].name,
-                    age: all[i].age,
-                    weight: all[i].weight,
-                    images: all[i].images,
-                    available: all[i].available,
-                    user: all[i].user
-                })
-
-            }
-
-            res.json({ pets, total })
+            res.json({ allPets, total })
 
         } catch (error) {
             res.status(422).json({
@@ -127,4 +102,37 @@ module.exports = class PetController {
             return
         }
     }
+
+    static async getAllUserPets(req, res) {
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
+
+        let { sort = 'asc', offset = 0, limit = 8 } = req.query
+
+        try {
+
+            const petsTotal = await Pet.find({ 'user._id': user._id }).exec()
+            const total = petsTotal.length ?? 0
+
+            const allPets = await Pet.find({ 'user._id': user._id })
+                .sort({ updatedAt: (sort == 'desc' ? -1 : 1) })
+                .skip(parseInt(offset))
+                .limit(parseInt(limit))
+                .exec()
+
+            res.json({ allPets, total })
+
+        } catch (error) {
+            res.status(422).json({
+                "error": {
+                    "limit/offset": {
+                        "msg": "O limit ou o offset não parece um valor válido.",
+                        "location": "query"
+                    }
+                }
+            })
+            return
+        }
+    }
+
 }
