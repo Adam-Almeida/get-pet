@@ -418,4 +418,64 @@ module.exports = class PetController {
             return
         }
     }
+
+    static async concludeAdoption(req, res) {
+        const { id } = req.params
+
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(422).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não é válido.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        const pet = await Pet.findOne({ _id: id })
+
+        if (!pet) {
+            res.status(404).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não pertence a nenhum pet.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        if (pet.user._id.equals(user.id)) {
+            res.status(422).json({
+                "error": {
+                    "pet": {
+                        "msg": "O pet deve ser seu para poder concluir a adoção.",
+                    }
+                }
+            })
+            return
+        }
+
+        //concliude adoption
+        pet.available = false
+        try {
+            await Pet.findByIdAndUpdate(id, pet)
+            res.status(200).json({
+                "success": {
+                    "message": "A adoção foi concluida com sucesso.",
+                }
+            })
+
+        } catch (error) {
+            res.status(500).json({ error: error })
+            return
+        }
+    }
+
 }
