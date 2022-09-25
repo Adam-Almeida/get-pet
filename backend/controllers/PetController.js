@@ -169,9 +169,9 @@ module.exports = class PetController {
     }
 
     static async getPetById(req, res) {
-        const {id}  = req.params
+        const { id } = req.params
 
-        if(!mongoose.Types.ObjectId.isValid(id)){
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             res.status(422).json({
                 "error": {
                     "id": {
@@ -183,9 +183,9 @@ module.exports = class PetController {
             return
         }
 
-        const pet = await Pet.findOne({_id: id})
+        const pet = await Pet.findOne({ _id: id })
 
-        if(!pet){
+        if (!pet) {
             res.status(404).json({
                 "error": {
                     "id": {
@@ -196,8 +196,74 @@ module.exports = class PetController {
             })
             return
         }
-        
-        res.status(200).json({pet})
+
+        res.status(200).json({ pet })
     }
 
+    static async removePetById(req, res) {
+        const { id } = req.params
+
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(422).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não é válido.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        const pet = await Pet.findOne({ _id: id })
+
+        if (!pet) {
+            res.status(404).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não pertence a nenhum pet.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        if (pet.user._id.toString() !== user._id.toString()) {
+            res.status(422).json({
+                "error": {
+                    "user": {
+                        "msg": "O pet informado não pertence a este usuário.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        try {
+            await Pet.findByIdAndRemove(id)
+            res.status(200).json({
+                "success": {
+                    "pet": {
+                        "msg": "O pet foi removido com sucesso.",
+                    }
+                }
+            })
+            return
+        } catch (error) {
+            res.status(422).json({
+                "error": {
+                    "pet": {
+                        "msg": "Tivemos um erro ao remover o pet.",
+                        "error": error
+                    }
+                }
+            })
+            return
+        }
+    }
 }
