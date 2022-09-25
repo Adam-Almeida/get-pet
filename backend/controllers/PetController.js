@@ -1,4 +1,5 @@
 const { validationResult, matchedData } = require('express-validator')
+const { default: mongoose } = require('mongoose')
 const GetToken = require('../helpers/GetToken')
 const GetUserByToken = require('../helpers/GetUserByToken')
 const Pet = require('../models/Pet')
@@ -165,6 +166,38 @@ module.exports = class PetController {
             return
         }
 
+    }
+
+    static async getPetById(req, res) {
+        const {id}  = req.params
+
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            res.status(422).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não é válido.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        const pet = await Pet.findOne({_id: id})
+
+        if(!pet){
+            res.status(404).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não pertence a nenhum pet.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+        
+        res.status(200).json({pet})
     }
 
 }

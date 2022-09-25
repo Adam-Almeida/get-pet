@@ -12,5 +12,6 @@ router.post('/create', verifyToken, imageUpload.array('images'), PetValidator.cr
 router.get('/', PetController.getList)
 router.get('/mypets', verifyToken, PetController.getAllUserPets)
 router.get('/myadoptions', verifyToken, PetController.getAllUserAdoptions)
+router.get('/:id', PetController.getPetById)
 
 module.exports = router
