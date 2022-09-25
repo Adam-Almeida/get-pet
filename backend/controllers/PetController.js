@@ -266,4 +266,83 @@ module.exports = class PetController {
             return
         }
     }
+
+    static async update(req, res) {
+        const { id } = req.params
+
+        const token = await GetToken(req)
+        const user = await GetUserByToken(token)
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(422).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não é válido.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        const pet = await Pet.findOne({ _id: id })
+
+        if (!pet) {
+            res.status(404).json({
+                "error": {
+                    "id": {
+                        "msg": "O id informado não pertence a nenhum pet.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        if (pet.user._id.toString() !== user._id.toString()) {
+            res.status(422).json({
+                "error": {
+                    "user": {
+                        "msg": "O pet informado não pertence a este usuário.",
+                        "location": "params"
+                    }
+                }
+            })
+            return
+        }
+
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(422).json({ error: errors.mapped() })
+            return
+        }
+        const data = matchedData(req)
+        const newImages = req.files
+
+        let images = [...pet.images]
+        newImages.map((newImages) => {
+            images.push(newImages.filename)
+        })
+
+        try {
+            const updatedPet = await Pet.findOneAndUpdate(
+                { _id: id },
+                { $set: data, images },
+                { new: true }
+            )
+            res.status(200).json({
+                "success": {
+                    "message": "Pet atualizado com sucesso",
+                    "user": { updatedPet }
+                }
+            })
+
+        } catch (error) {
+            res.status(500).json({ error: error })
+            return
+        }
+
+    }
+
+
 }
