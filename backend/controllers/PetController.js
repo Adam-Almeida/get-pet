@@ -21,7 +21,7 @@ module.exports = class PetController {
         const user = await GetUserByToken(token)
 
         //images upload
-        if(!images.length) {
+        if (!images.length) {
             res.status(422).json({
                 "error": {
                     "images": {
@@ -65,5 +65,66 @@ module.exports = class PetController {
             res.status(500).json({ error: error })
         }
 
+    }
+
+    static async getAll(req, res) {
+        const pets = await Pet.find().sort('-createdAt')
+        res.status(200).json({
+            pets: pets
+        })
+    }
+
+    static async getList(req, res) {
+        let { sort = 'asc', offset = 0, limit = 8, q, color } = req.query
+
+        try {
+
+            let filters = { status: true }
+
+            if (q) {
+                filters.name = { '$regex': q, '$options': 'i' }
+            }
+
+            if (color) {
+                filters.color = { '$regex': color, '$options': 'i' }
+            }
+
+            const petsTotal = await Pet.find(filters).exec()
+            const total = petsTotal.length ?? 0
+
+            const all = await Pet.find(filters)
+                .sort({ updatedAt: (sort == 'desc' ? -1 : 1) })
+                .skip(parseInt(offset))
+                .limit(parseInt(limit))
+                .exec()
+
+            let pets = []
+            for (let i in all) {
+
+                pets.push({
+                    id: all[i]._id,
+                    name: all[i].name,
+                    age: all[i].age,
+                    weight: all[i].weight,
+                    images: all[i].images,
+                    available: all[i].available,
+                    user: all[i].user
+                })
+
+            }
+
+            res.json({ pets, total })
+
+        } catch (error) {
+            res.status(422).json({
+                "error": {
+                    "limit/offset": {
+                        "msg": "O limit ou o offset não parece um valor válido.",
+                        "location": "query"
+                    }
+                }
+            })
+            return
+        }
     }
 }
