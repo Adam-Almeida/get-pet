@@ -5,7 +5,7 @@ function Navbar() {
     return (
         <nav>
             <div>
-                <img src={Logo} alt='Adote Um Pet'/>
+                <img src={Logo} alt='Adote Um Pet' />
             </div>
             <ul>
                 <li>

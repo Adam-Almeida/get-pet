@@ -12,7 +12,7 @@ import Home from './components/pages/Home'
 function App() {
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>
@@ -22,7 +22,7 @@ function App() {
       <Routes>
         <Route path="/register" element={<Register />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </Router>
   );
 }
