@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import Logo from '../../assets/img/logo.png'
+import Logo from '../../../assets/img/logo.png'
+import { Container } from './styles'
 
 function Navbar() {
     return (
-        <nav>
+        <Container>
             <div>
                 <img src={Logo} alt='Adote Um Pet' />
             </div>
@@ -18,7 +19,7 @@ function Navbar() {
                     <Link to="/register">Cadastrar</Link>
                 </li>
             </ul>
-        </nav>
+        </Container>
     )
 }
 

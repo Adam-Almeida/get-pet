@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-//components
-import Navbar from './components/layout/Navbar'
+import Navbar from './components/layout/navbar/Navbar'
 import Footer from './components/layout/Footer'
 
 //pages
@@ -21,6 +20,9 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/register" element={<Register />} />
+      </Routes>
+      <Routes>
+        <Route path="" element={<p>Path not resolved</p>} />
       </Routes>
       <Footer />
     </Router>
