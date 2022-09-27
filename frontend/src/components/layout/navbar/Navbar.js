@@ -10,7 +10,7 @@ function Navbar() {
         <Container>
             <Content>
                 <img src={Logo} alt='Adote Um Pet' />
-                <right>
+                <span>
                     <Link to="/">
                         <MenuButton text="ADOTAR">
                             <RiHeartAddFill color="#ffffff" />
@@ -26,7 +26,7 @@ function Navbar() {
                             <RiUserAddLine color="#ffffff" />
                         </MenuButton>
                     </Link>
-                </right>
+                </span>
             </Content>
         </Container>
     )

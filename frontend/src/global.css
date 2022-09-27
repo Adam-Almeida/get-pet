@@ -1,9 +1,11 @@
 :root {
   --background: #f0f2f5;
   --text-title: #0a2689;
+  --green: #22ac00;
   --text-body: #969cb3;
   --shape: #ffffff;
   --theme: #977600;
+  --outline: #cacaca
   --footer: #fff7da;
 }
 
@@ -34,9 +36,9 @@ body {
 
 input,
 textarea,
-select,
+select
 :focus {
-  outline: var(--theme) solid 1px;
+  outline: var(--outline) solid 1px;
 }
 
 body,
