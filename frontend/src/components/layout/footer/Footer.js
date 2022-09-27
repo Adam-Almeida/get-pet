@@ -1,8 +1,10 @@
+import { Container } from './styles'
+
 function Footer() {
     return (
-        <footer>
+        <Container>
             <span className="footer">Adote Um Pet</span> &copy;2022
-        </footer>
+        </Container>
     )
 }
 

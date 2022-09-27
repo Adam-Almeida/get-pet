@@ -10,8 +10,8 @@ export const Button = styled.button`
         height: 3rem;
         border: 0;
         transition: filter 0.2s;
-        &:hover{
-            filter: brightness(1.2);
+        &:hover {
+            filter: brightness(0.8);
         }
 
         display: flex;
@@ -29,7 +29,5 @@ export const Button = styled.button`
             margin-right: 1rem;
         }
 
-        &:hover {
-            filter: brightness(0.8);
-        }
+        
 `

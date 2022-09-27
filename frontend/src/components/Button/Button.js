@@ -1,14 +1,12 @@
-import { RiHeartAddFill } from 'react-icons/ri'
-
-import {Button} from "./styles.js";
+import { Button } from "./styles.js";
 
 function MenuButton(props) {
 
-return (
-    <Button type="button">
-        {props.children}
-        {props.text}
-    </Button>
-)
+    return (
+        <Button type="button">
+            {props.children}
+            {props.text}
+        </Button>
+    )
 }
 export default MenuButton
