@@ -1,9 +1,21 @@
 import styled from "styled-components";
 
 export const Container = styled.header`
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
+        width: 100%;
         background-color: #ffd400;
-        color: rgba(4, 46, 74, 0.867);
+`
+export const Content = styled.div`
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    right {
+        display: flex;
+    }
+
+    img {
+        width: 4rem;
+    }
 `
