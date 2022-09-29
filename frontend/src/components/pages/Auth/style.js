@@ -9,17 +9,41 @@ export const Form = styled.form`
 
   @media (max-width: 720px) {
     padding: 2rem;
+
   }
 
   label{
       color: var(--text-body);
     }
 
-
   h2 {
     color: var(--text-title);
     font-size: 1.5rem;
     margin-bottom: 2rem;
+  }
+
+  .twoInputs{
+    display: flex;
+    justify-content: space-between;
+
+    span{
+      width: 100%;
+      flex-direction: column;
+      & + span {
+        margin-left: 0.8rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+      display: inline;
+      span + span {
+        margin-left: 0;
+      }
+    }
+  }
+
+  p{
+    margin-top: 1rem;
   }
 
   button[type="submit"] {

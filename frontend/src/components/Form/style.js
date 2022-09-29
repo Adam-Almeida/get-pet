@@ -13,6 +13,7 @@ export const StyleImput = styled.input`
     &::placeholder {
       color: var(--text-body);
     }
+    
     & + input {
       margin-top: 0.8rem;
     }

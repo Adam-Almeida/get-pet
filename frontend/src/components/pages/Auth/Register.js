@@ -31,20 +31,26 @@ function Register() {
                 onChange={handleInputChange}
                 placeholder="Digite o seu nome"
             />
-            <Imput
-                text="Telefone"
-                type="text"
-                name="phone"
-                placeholder="Digite o seu telefone"
-                onChange={handleInputChange}
-            />
-            <Imput
-                text="E-mail"
-                type="email"
-                name="email"
-                placeholder="Digite o seu e-mail"
-                onChange={handleInputChange}
-            />
+            <div className='twoInputs'>
+                <span>
+                    <Imput
+                        text="Telefone"
+                        type="text"
+                        name="phone"
+                        placeholder="Digite o seu telefone"
+                        onChange={handleInputChange}
+                    />
+                </span>
+                <span>
+                    <Imput
+                        text="E-mail"
+                        type="email"
+                        name="email"
+                        placeholder="Digite o seu e-mail"
+                        onChange={handleInputChange}
+                    />
+                </span>
+            </div>
             <Imput
                 text="Senha"
                 type="password"
