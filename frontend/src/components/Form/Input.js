@@ -1,11 +1,10 @@
-import {StyleImput} from './style'
+import { StyleImput } from './style'
 
-function Imput({text, type, name, placeholder}) {
-    return(
+function Imput({ text, type, name, placeholder, onChange }) {
+    return (
         <>
-        <label>{text}</label>
-        <StyleImput type={type} name={name} placeholder={placeholder}>
-        </StyleImput>
+            <label>{text}</label>
+            <StyleImput onChange={onChange} type={type} name={name} placeholder={placeholder} />
         </>
     )
 }

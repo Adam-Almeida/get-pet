@@ -1,28 +1,69 @@
-import { useState } from "react"
+import React, { useContext, useState } from "react"
+import { Link } from "react-router-dom"
 import Imput from "../../Form/Input"
 import { Form } from "./style"
 
-function Register() {
-    const [user, setUser] = useState({})
+import { Context } from '../../../context/UserContext'
 
-    function handleOnChange(e) {
+function Register() {
+
+    const [user, setUser] = useState({})
+    const { register } = useContext(Context)
+
+    const handleInputChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value })
     }
 
-    function handleSubmit(e){
+    const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(user)
+        register(user)
     }
 
     return (
         <Form onSubmit={handleSubmit}>
-            <h2>Ei, efetue seu cadastro para poder oferecer ou adotar um Pet!</h2>
-            <Imput type="text" text="Nome" name="name" placeholder="Digite seu nome" />
-            <Imput type="text" text="Telefone" name="phone" placeholder="Digite seu telefone" />
-            <Imput type="email" text="Email" name="email" placeholder="Digite seu email" />
-            <Imput type="password" text="Senha" name="password" placeholder="Digite sua senha" />
-            <Imput type="password" text="Confirmação de Senha" name="confirmPassword" placeholder="Confirme sua senha" />
-            <button type="submit" onChange={handleOnChange}>Cadastrar</button>
+            <h1>Registrar novo Usuário</h1>
+            <br />
+
+            <Imput
+                text="Nome"
+                type="text"
+                name="name"
+                onChange={handleInputChange}
+                placeholder="Digite o seu nome"
+            />
+            <Imput
+                text="Telefone"
+                type="text"
+                name="phone"
+                placeholder="Digite o seu telefone"
+                onChange={handleInputChange}
+            />
+            <Imput
+                text="E-mail"
+                type="email"
+                name="email"
+                placeholder="Digite o seu e-mail"
+                onChange={handleInputChange}
+            />
+            <Imput
+                text="Senha"
+                type="password"
+                name="password"
+                placeholder="Digite a sua senha"
+                onChange={handleInputChange}
+            />
+            <Imput
+                text="Confirmação de senha"
+                type="password"
+                name="confirmpassword"
+                placeholder="Confirme a sua senha"
+                onChange={handleInputChange}
+            />
+            <button type="submit">Cadastrar</button>
+
+            <p>
+                Já tem conta? <Link to="/login">Clique aqui.</Link>
+            </p>
         </Form>
     )
 }
