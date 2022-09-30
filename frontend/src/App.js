@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/layout/navbar/Navbar'
 import Footer from './components/layout/footer/Footer'
+import Message from './components/Message/Message'
 
 //pages
 import Login from '../src/components/pages/Auth/Login'
@@ -16,6 +17,7 @@ function App() {
     <Router>
       <UserProvider>
         <Navbar />
+        <Message/>
         <MainContainer>
           <Routes>
             <Route path="/" element={<Home />} />

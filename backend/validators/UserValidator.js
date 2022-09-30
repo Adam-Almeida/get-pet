@@ -7,7 +7,7 @@ module.exports = {
       isLength: {
         options: { min: 2, max: 255 }
       },
-      errorMessage: 'O nome precisa ter ao menos 2 caracteres.'
+      errorMessage: 'O nome não parece válido.'
     },
     email: {
       isEmail: true,

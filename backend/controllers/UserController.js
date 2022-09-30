@@ -13,20 +13,14 @@ module.exports = class UserController {
 
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            res.status(422).json({ error: errors.mapped() })
+            res.status(422).json({ msg: errors.array()[0].msg })
             return
         }
         const data = matchedData(req)
 
         if (data.password !== data.confirmPassword) {
             res.status(422).json({
-                "error": {
-                    "confirmPassword": {
-                        "msg": "A senha e a confrimação de senha não conferem.",
-                        "param": "confirmPassword",
-                        "location": "body"
-                    }
-                }
+                "msg": "A senha e a confrimação de senha não conferem."
             })
             return
         }
@@ -37,12 +31,7 @@ module.exports = class UserController {
 
         if (emailExists) {
             res.status(422).json({
-                "error": {
-                    "email": {
-                        "msg": "Por favor, utilize outro email.",
-                        "param": "email",
-                    }
-                }
+                "msg": "Por favor, utilize outro email."
             })
             return
         }
@@ -81,12 +70,8 @@ module.exports = class UserController {
 
         if (!user) {
             res.status(422).json({
-                "error": {
-                    "email": {
-                        "msg": "O usuário informado ainda não está cadastrado",
-                        "param": "email",
-                    }
-                }
+                "msg": "O usuário informado ainda não está cadastrado"
+
             })
             return
         }
@@ -95,11 +80,7 @@ module.exports = class UserController {
 
         if (!match) {
             res.status(422).json({
-                "error": {
-                    "user/password": {
-                        "msg": "O usuário ou senha informados não conferem",
-                    }
-                }
+                "msg": "O usuário ou senha informados não conferem"
             })
             return
         }
@@ -136,11 +117,7 @@ module.exports = class UserController {
 
         if (!validId) {
             res.status(422).json({
-                "error": {
-                    "_id": {
-                        "msg": "O id informado não parece válido",
-                    }
-                }
+                "msg": "O id informado não parece válido",
             })
             return
         }
@@ -148,11 +125,7 @@ module.exports = class UserController {
         const user = await User.findById(id).select('-password')
         if (!user) {
             res.status(422).json({
-                "error": {
-                    "user": {
-                        "msg": "O usuário informado não existe",
-                    }
-                }
+                "msg": "O usuário informado não existe"
             })
             return
         }
@@ -177,22 +150,14 @@ module.exports = class UserController {
 
         if (!validId) {
             res.status(422).json({
-                "error": {
-                    "_id": {
-                        "msg": "O id informado não parece válido",
-                    }
-                }
+                "msg": "O id informado não parece válido"
             })
             return
         }
 
         if (!user) {
             res.status(422).json({
-                "error": {
-                    "user": {
-                        "msg": "O usuário informado não existe",
-                    }
-                }
+                "msg": "O usuário informado não existe"
             })
             return
         }
@@ -202,11 +167,7 @@ module.exports = class UserController {
         const userExists = await User.findOne({ email: email })
         if (user.email !== email && userExists) {
             res.status(422).json({
-                "error": {
-                    "email": {
-                        "msg": "Por favor, utilize outro email",
-                    }
-                }
+                "msg": "Por favor, utilize outro email"
             })
             return
         }
@@ -217,13 +178,7 @@ module.exports = class UserController {
 
         if (password !== null && password !== confirmPassword) {
             res.status(422).json({
-                "error": {
-                    "confirmPassword": {
-                        "msg": "A senha e a confrimação de senha não conferem.",
-                        "param": "confirmPassword",
-                        "location": "body"
-                    }
-                }
+                "msg": "A senha e a confrimação de senha não conferem."
             })
 
         } else if (password !== undefined && password === confirmPassword) {
@@ -239,10 +194,8 @@ module.exports = class UserController {
                 { new: true }
             ).select('-password')
             res.status(200).json({
-                "success": {
-                    "message": "Usuário atualizado com sucesso",
-                    "user": { updatedUser }
-                }
+                "msg": "Usuário atualizado com sucesso",
+                "user": { updatedUser }
             })
 
         } catch (error) {

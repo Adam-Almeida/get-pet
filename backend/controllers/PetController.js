@@ -24,13 +24,7 @@ module.exports = class PetController {
         //images upload
         if (!images.length) {
             res.status(422).json({
-                "error": {
-                    "images": {
-                        "msg": "A imagem é obrigatória.",
-                        "param": "images",
-                        "location": "body"
-                    }
-                }
+                "msg": "A imagem é obrigatória."
             })
             return
         }
@@ -57,10 +51,8 @@ module.exports = class PetController {
         try {
             const newPet = await pet.save()
             res.status(201).json({
-                "success": {
-                    "message": "Pet cadastrado com sucesso",
-                    "pet": { newPet }
-                }
+                "msg": "Pet cadastrado com sucesso",
+                newPet
             })
         } catch (error) {
             res.status(500).json({ error: error })
@@ -93,12 +85,7 @@ module.exports = class PetController {
 
         } catch (error) {
             res.status(422).json({
-                "error": {
-                    "limit/offset": {
-                        "msg": "O limit ou o offset não parece um valor válido.",
-                        "location": "query"
-                    }
-                }
+                "msg": "O limit ou o offset não parece um valor válido."
             })
             return
         }
@@ -125,12 +112,7 @@ module.exports = class PetController {
 
         } catch (error) {
             res.status(422).json({
-                "error": {
-                    "limit/offset": {
-                        "msg": "O limit ou o offset não parece um valor válido.",
-                        "location": "query"
-                    }
-                }
+                "msg": "O limit ou o offset não parece um valor válido."
             })
             return
         }
@@ -156,12 +138,7 @@ module.exports = class PetController {
 
         } catch (error) {
             res.status(422).json({
-                "error": {
-                    "limit/offset": {
-                        "msg": "O limit ou o offset não parece um valor válido.",
-                        "location": "query"
-                    }
-                }
+                "msg": "O limit ou o offset não parece um valor válido."
             })
             return
         }
@@ -173,12 +150,7 @@ module.exports = class PetController {
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             res.status(422).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não é válido.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não é válido."
             })
             return
         }
@@ -187,12 +159,7 @@ module.exports = class PetController {
 
         if (!pet) {
             res.status(404).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não pertence a nenhum pet.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não pertence a nenhum pet."
             })
             return
         }
@@ -208,12 +175,7 @@ module.exports = class PetController {
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             res.status(422).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não é válido.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não é válido."
             })
             return
         }
@@ -222,24 +184,14 @@ module.exports = class PetController {
 
         if (!pet) {
             res.status(404).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não pertence a nenhum pet.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não pertence a nenhum pet."
             })
             return
         }
 
         if (pet.user._id.toString() !== user._id.toString()) {
             res.status(422).json({
-                "error": {
-                    "user": {
-                        "msg": "O pet informado não pertence a este usuário.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O pet informado não pertence a este usuário."
             })
             return
         }
@@ -247,21 +199,12 @@ module.exports = class PetController {
         try {
             await Pet.findByIdAndRemove(id)
             res.status(200).json({
-                "success": {
-                    "pet": {
-                        "msg": "O pet foi removido com sucesso.",
-                    }
-                }
+                "msg": "O pet foi removido com sucesso."
             })
             return
         } catch (error) {
             res.status(422).json({
-                "error": {
-                    "pet": {
-                        "msg": "Tivemos um erro ao remover o pet.",
-                        "error": error
-                    }
-                }
+                "msg": "Tivemos um erro ao remover o pet."
             })
             return
         }
@@ -275,12 +218,8 @@ module.exports = class PetController {
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             res.status(422).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não é válido.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não é válido.",
+
             })
             return
         }
@@ -289,31 +228,22 @@ module.exports = class PetController {
 
         if (!pet) {
             res.status(404).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não pertence a nenhum pet.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não pertence a nenhum pet."
             })
             return
         }
 
         if (pet.user._id.toString() !== user._id.toString()) {
             res.status(422).json({
-                "error": {
-                    "user": {
-                        "msg": "O pet informado não pertence a este usuário.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O pet informado não pertence a este usuário.",
             })
             return
         }
 
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            res.status(422).json({ error: errors.mapped() })
+            res.status(422).json({ msg: errors.array()[0].msg })
+
             return
         }
         const data = matchedData(req)
@@ -331,10 +261,9 @@ module.exports = class PetController {
                 { new: true }
             )
             res.status(200).json({
-                "success": {
-                    "message": "Pet atualizado com sucesso",
-                    "user": { updatedPet }
-                }
+                "message": "Pet atualizado com sucesso",
+                "user": { updatedPet }
+
             })
 
         } catch (error) {
@@ -352,12 +281,7 @@ module.exports = class PetController {
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             res.status(422).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não é válido.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não é válido."
             })
             return
         }
@@ -366,34 +290,21 @@ module.exports = class PetController {
 
         if (!pet) {
             res.status(404).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não pertence a nenhum pet.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não pertence a nenhum pet."
             })
             return
         }
 
         if (pet.user._id.equals(user.id)) {
             res.status(422).json({
-                "error": {
-                    "pet": {
-                        "msg": "Você não pode agendar uma visita para o seu próprio pet.",
-                    }
-                }
+                "msg": "Você não pode agendar uma visita para o seu próprio pet."
             })
             return
         }
         if (pet.adopter) {
             if (pet.adopter._id.equals(user._id)) {
                 res.status(422).json({
-                    "error": {
-                        "pet": {
-                            "msg": "Você já agendou uma visita para este pet.",
-                        }
-                    }
+                    "msg": "Você já agendou uma visita para este pet."
                 })
                 return
             }
@@ -408,9 +319,7 @@ module.exports = class PetController {
         try {
             await Pet.findByIdAndUpdate(id, pet)
             res.status(200).json({
-                "success": {
-                    "message": `A visita foi agendada com sucesso, entre em contato com ${pet.user.name}`,
-                }
+                "msg": `A visita foi agendada com sucesso, entre em contato com ${pet.user.name}`
             })
 
         } catch (error) {
@@ -427,12 +336,7 @@ module.exports = class PetController {
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             res.status(422).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não é válido.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não é válido."
             })
             return
         }
@@ -441,23 +345,14 @@ module.exports = class PetController {
 
         if (!pet) {
             res.status(404).json({
-                "error": {
-                    "id": {
-                        "msg": "O id informado não pertence a nenhum pet.",
-                        "location": "params"
-                    }
-                }
+                "msg": "O id informado não pertence a nenhum pet."
             })
             return
         }
 
         if (pet.user._id.equals(user.id)) {
             res.status(422).json({
-                "error": {
-                    "pet": {
-                        "msg": "O pet deve ser seu para poder concluir a adoção.",
-                    }
-                }
+                "msg": "O pet deve ser seu para poder concluir a adoção.",
             })
             return
         }
@@ -467,9 +362,7 @@ module.exports = class PetController {
         try {
             await Pet.findByIdAndUpdate(id, pet)
             res.status(200).json({
-                "success": {
-                    "message": "A adoção foi concluida com sucesso.",
-                }
+                "msg": "A adoção foi concluida com sucesso.",
             })
 
         } catch (error) {
