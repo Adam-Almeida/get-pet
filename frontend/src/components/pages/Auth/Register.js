@@ -61,7 +61,7 @@ function Register() {
             <Imput
                 text="Confirmação de senha"
                 type="password"
-                name="confirmpassword"
+                name="confirmPassword"
                 placeholder="Confirme a sua senha"
                 onChange={handleInputChange}
             />

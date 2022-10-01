@@ -12,7 +12,7 @@ function Message() {
         bus.addListener('flash', (message, type) => {
             setVisibility(true)
             setMessage(message)
-            setType(type)
+            setType(message.type)
             setTimeout(() => {
                 setVisibility(false)
             }, 3000);
@@ -22,7 +22,7 @@ function Message() {
     return (
         visibility && (
             <Container>
-                <Text type={type}>{message}</Text>
+                <Text type={type}>{message.message}</Text>
             </Container>
         )
     )

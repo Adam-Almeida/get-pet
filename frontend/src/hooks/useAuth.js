@@ -9,17 +9,16 @@ export default function useAuth() {
     const {setFlashMessage} = useFlashMessage()
 
     async function register(user) {
-        let messageText = 'Cadastro realizado com sucesso'
-        let messageType = 'success'
+        let messageText = "Cadastro realizado com sucesso"
+        let messageType = "success"
 
         try {
                 await api.post('/users/register', user).then((response) => {
                 return response.data
-            })
-                   
+            })          
         } catch (error) {
-            messageText = error.response.data.error
-            messageType = 'error'
+            messageText = error.response.data.msg
+            messageType = "error"
         }
 
         setFlashMessage(messageText, messageType)
