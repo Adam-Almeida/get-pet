@@ -1,28 +1,38 @@
-import api from '../utils/api'
-import useFlashMessage from './useFlashMessage'
+import { useState } from "react";
+import api from "../utils/api";
+import useFlashMessage from "./useFlashMessage";
 
-// import { useState, useEffect } from 'react'
-// import { useHistory } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 export default function useAuth() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const { setFlashMessage } = useFlashMessage();
 
-    const {setFlashMessage} = useFlashMessage()
+  const history = useNavigate();
 
-    async function register(user) {
-        let messageText = "Cadastro realizado com sucesso"
-        let messageType = "success"
+  async function register(user) {
+    let messageText = "Cadastro realizado com sucesso";
+    let messageType = "success";
 
-        try {
-                await api.post('/users/register', user).then((response) => {
-                return response.data
-            })          
-        } catch (error) {
-            messageText = error.response.data.msg
-            messageType = "error"
-        }
+    try {
+      const data = await api.post("/users/register", user).then((response) => {
+        return response.data;
+      });
 
-        setFlashMessage(messageText, messageType)
+      await authUser(data);
+    } catch (error) {
+      messageText = error.response.data.msg;
+      messageType = "error";
     }
 
-    return { register }
+    async function authUser(data) {
+      setAuthenticated(true);
+      localStorage.setItem("token", JSON.stringify(data.token));
+      history("/");
+    }
+
+    setFlashMessage(messageText, messageType);
+  }
+
+  return { register };
 }

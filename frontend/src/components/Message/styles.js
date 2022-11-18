@@ -10,5 +10,6 @@ export const Text = styled.div`
         padding: 1rem;
         border: #d9d9d9 1px solid;
         border-radius: 0.45rem;
-        color: ${((props) => props.type === 'error' ? "#eb4f34" : "#64eb34")}        
+        color: ${((props) => props.type === 'error' ? "#eb4f34" : "#64eb34")};
+        transition: 2.0ms;        
 `
